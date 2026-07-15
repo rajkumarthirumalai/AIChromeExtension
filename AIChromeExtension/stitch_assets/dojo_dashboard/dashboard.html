@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dojo Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&amp;family=JetBrains+Mono:wght@500&amp;family=Outfit:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "inverse-primary": "#bb152c",
+                        "on-primary-fixed": "#410007",
+                        "on-tertiary": "#003731",
+                        "surface-variant": "#353437",
+                        "background": "#131315",
+                        "outline-variant": "#5b403f",
+                        "primary": "#ffb3b1",
+                        "secondary-container": "#fbb400",
+                        "on-secondary": "#422c00",
+                        "primary-container": "#ff535b",
+                        "on-tertiary-container": "#00302a",
+                        "on-secondary-container": "#694900",
+                        "on-tertiary-fixed": "#00201c",
+                        "surface-bright": "#39393b",
+                        "tertiary-fixed": "#8cf5e4",
+                        "surface-container-low": "#1b1b1d",
+                        "inverse-on-surface": "#303032",
+                        "tertiary-container": "#30a193",
+                        "surface-dim": "#131315",
+                        "on-primary": "#680011",
+                        "surface-container-highest": "#353437",
+                        "parchment": "#F1FAEE",
+                        "outline": "#ab8987",
+                        "muted": "#8D99AE",
+                        "surface-container-lowest": "#0e0e10",
+                        "primary-fixed": "#ffdad8",
+                        "error": "#ffb4ab",
+                        "surface-container": "#201f21",
+                        "on-error-container": "#ffdad6",
+                        "error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#005048",
+                        "surface-container-high": "#2a2a2c",
+                        "on-primary-fixed-variant": "#92001c",
+                        "secondary-fixed-dim": "#ffba27",
+                        "on-surface-variant": "#e4bebc",
+                        "on-error": "#690005",
+                        "secondary-fixed": "#ffdea9",
+                        "surface-tint": "#ffb3b1",
+                        "on-surface": "#e5e1e4",
+                        "secondary": "#ffd795",
+                        "surface": "#1E1E24",
+                        "on-secondary-fixed": "#271900",
+                        "primary-fixed-dim": "#ffb3b1",
+                        "inverse-surface": "#e5e1e4",
+                        "on-primary-container": "#5b000e",
+                        "on-background": "#e5e1e4",
+                        "tertiary": "#6fd8c8",
+                        "tertiary-fixed-dim": "#6fd8c8",
+                        "on-secondary-fixed-variant": "#5e4100"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "base": "8px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "48px",
+                        "border-width": "3px"
+                    },
+                    fontFamily: {
+                        "headline-lg": ["Bricolage Grotesque", "sans-serif"],
+                        "headline-xl": ["Bricolage Grotesque", "sans-serif"],
+                        "headline-md": ["Bricolage Grotesque", "sans-serif"],
+                        "body-lg": ["Outfit", "sans-serif"],
+                        "label-md": ["JetBrains Mono", "monospace"],
+                        "label-sm": ["JetBrains Mono", "monospace"],
+                        "body-md": ["Outfit", "sans-serif"]
+                    },
+                    fontSize: {
+                        "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "800" }],
+                        "headline-xl": ["48px", { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "800" }],
+                        "headline-md": ["24px", { lineHeight: "32px", fontWeight: "700" }],
+                        "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+                        "label-md": ["14px", { lineHeight: "20px", letterSpacing: "0.05em", fontWeight: "500" }],
+                        "label-sm": ["12px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "500" }],
+                        "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* 16-bit retro arcade aesthetic utilities */
+        .retro-border {
+            border: 3px solid var(--tw-prose-body, #5b403f); /* outline-variant */
+            box-shadow: 4px 4px 0px 0px #000;
+        }
+        .retro-input {
+            border: 3px solid #5b403f;
+            background-color: #131315;
+            transition: all 0.2s ease;
+        }
+        .retro-input:focus {
+            outline: none;
+            border-color: #fbb400; /* secondary-container / Dojo Gold */
+            box-shadow: 4px 4px 0px 0px #fbb400;
+        }
+        .retro-btn {
+            border: 3px solid #5b403f;
+            box-shadow: 4px 4px 0px 0px #000;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        .retro-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px #000;
+        }
+        /* Gate Toggle Switch */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #30a193; /* tertiary-container */
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #30a193;
+            box-shadow: 0 0 10px #30a193;
+        }
+        
+        .health-bar-container {
+            border: 3px solid #5b403f;
+            background-color: #131315;
+            height: 24px;
+            width: 100%;
+            position: relative;
+        }
+        .health-bar-fill {
+            height: 100%;
+            background-color: #30a193; /* Jade Green for high stamina */
+            width: 75%; /* Example value */
+            display: flex;
+            align-items: center;
+        }
+        .health-segment {
+            width: 10%;
+            height: 100%;
+            border-right: 1px solid #131315;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background w-[360px] h-[500px] overflow-hidden flex flex-col m-0 p-0">
+<!-- TopAppBar -->
+<header class="bg-background border-b-[3px] border-outline-variant shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex justify-between items-center w-full px-base py-base z-10 shrink-0">
+<div class="flex flex-col">
+<h1 class="font-headline-md text-headline-md font-black text-secondary-container tracking-tighter uppercase">OJI-SAN'S DOJO</h1>
+<div class="bg-error-container text-parchment font-label-sm text-label-sm px-2 py-1 mt-1 inline-block border-[2px] border-on-error-container self-start">
+                DISCIPLINE LEVEL: SLACKER
+            </div>
+</div>
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-secondary-container text-[24px]">account_tree</span>
+<span class="material-symbols-outlined text-secondary-container text-[24px]">military_tech</span>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 overflow-y-auto p-gutter flex flex-col gap-gutter bg-surface">
+<!-- Dojo Gate Toggle -->
+<section class="bg-surface-container-high retro-border p-4 flex flex-col items-center justify-center gap-2">
+<h2 class="font-label-md text-label-md uppercase text-on-surface">Dojo Gate</h2>
+<div class="relative inline-block w-24 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-8 h-8 rounded-full bg-background border-4 appearance-none cursor-pointer border-error" id="toggle" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-8 rounded-full bg-error cursor-pointer border-2 border-outline-variant" for="toggle"></label>
+</div>
+<div class="font-label-md text-label-md uppercase text-tertiary-container font-bold" id="gate-status">OPEN</div>
+</section>
+<!-- Training Goal Input -->
+<section class="bg-surface-container-low retro-border p-4 flex flex-col gap-3">
+<label class="font-label-md text-label-md uppercase text-on-surface" for="goal">Set your Training Goal</label>
+<input class="retro-input p-2 font-body-md text-body-md text-on-background w-full" id="goal" placeholder="Focus on coding..." type="text"/>
+<div class="flex items-center gap-2 text-error font-label-sm text-label-sm mt-1">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<p>Warning: Oji-San is watching.</p>
+</div>
+</section>
+<!-- Sparring Stats -->
+<section class="bg-surface-container-low retro-border p-4 flex flex-col gap-3">
+<h2 class="font-label-md text-label-md uppercase text-secondary-container border-b-2 border-outline-variant pb-1 mb-2">Today's Sparring Stats</h2>
+<!-- Health Bar (Focus Stamina) -->
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-label-sm uppercase text-on-surface-variant">Focus Stamina</span>
+<div class="health-bar-container">
+<div class="health-bar-fill">
+<!-- Simulated segments -->
+<div class="health-segment"></div><div class="health-segment"></div><div class="health-segment"></div>
+<div class="health-segment"></div><div class="health-segment"></div><div class="health-segment"></div>
+<div class="health-segment"></div><div class="health-segment"></div>
+</div>
+</div>
+</div>
+<!-- Text Stats -->
+<div class="flex justify-between items-center bg-surface p-2 border-[2px] border-outline-variant mt-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-tertiary">description</span>
+<span class="font-label-md text-label-md text-on-surface">Pages Evaluated</span>
+</div>
+<span class="font-headline-md text-headline-md text-secondary-container">20</span>
+</div>
+<div class="flex justify-between items-center bg-surface p-2 border-[2px] border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-error">swords</span>
+<span class="font-label-md text-label-md text-on-surface">Distractions Slashed</span>
+</div>
+<span class="font-headline-md text-headline-md text-primary-container">4</span>
+</div>
+</section>
+</main>
+<!-- Footer Quote -->
+<footer class="bg-surface-container-lowest border-t-[3px] border-outline-variant py-3 px-4 shrink-0 flex items-center justify-center text-center shadow-[0px_-4px_0px_0px_rgba(0,0,0,1)] relative z-10">
+<p class="font-body-md text-body-md text-muted italic">"A thousand commits begin with a single keystroke." <br/>- Master Oji-San</p>
+</footer>
+<script>
+        // Simple toggle logic for the gate status text
+        const toggle = document.getElementById('toggle');
+        const statusText = document.getElementById('gate-status');
+
+        toggle.addEventListener('change', function() {
+            if(this.checked) {
+                statusText.textContent = 'OPEN';
+                statusText.classList.remove('text-error');
+                statusText.classList.add('text-tertiary-container');
+            } else {
+                statusText.textContent = 'CLOSED';
+                statusText.classList.remove('text-tertiary-container');
+                statusText.classList.add('text-error');
+            }
+        });
+    </script>
+</body></html>

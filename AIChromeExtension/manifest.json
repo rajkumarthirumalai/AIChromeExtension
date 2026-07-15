@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Oji-San - AI Dojo Focus Master",
+  "version": "1.0.0",
+  "description": "The strict, wise, 36th Chamber AI Master that beats distraction out of you.",
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Oji-San Dojo"
+  },
+  "background": {
+    "service_worker": "src/background.ts",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "js": ["src/content.tsx"],
+      "matches": ["<all_urls>"],
+      "run_at": "document_end"
+    }
+  ],
+  "permissions": [
+    "storage",
+    "tabs",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ]
+}

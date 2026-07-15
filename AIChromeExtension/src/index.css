@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 16-bit retro arcade aesthetic utilities */
+.retro-border {
+  border: 3px solid #5b403f; /* outline-variant */
+  box-shadow: 4px 4px 0px 0px #000;
+}
+
+.retro-input {
+  border: 3px solid #5b403f;
+  background-color: #131315;
+  transition: all 0.2s ease;
+}
+
+.retro-input:focus {
+  outline: none;
+  border-color: #fbb400; /* secondary-container / Dojo Gold */
+  box-shadow: 4px 4px 0px 0px #fbb400;
+}
+
+.retro-btn {
+  border: 3px solid #5b403f;
+  box-shadow: 4px 4px 0px 0px #000;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.retro-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px #000;
+}
+
+/* Custom retro shadows and glows */
+.retro-shadow-primary {
+  box-shadow: 4px 4px 0px 0px rgba(187, 21, 44, 1);
+}
+
+.retro-shadow-secondary {
+  box-shadow: 4px 4px 0px 0px rgba(91, 64, 63, 1);
+}
+
+.retro-shadow-container {
+  box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1);
+}
+
+.glow-crimson {
+  box-shadow: 0 0 40px rgba(187, 21, 44, 0.4);
+}
+
+/* Health Bar (Focus Stamina) */
+.health-bar-container {
+  border: 3px solid #5b403f;
+  background-color: #131315;
+  height: 24px;
+  width: 100%;
+  position: relative;
+}
+
+.health-bar-fill {
+  height: 100%;
+  background-color: #30a193; /* Jade Green for high stamina */
+  display: flex;
+  align-items: center;
+  transition: width 0.3s ease;
+}
+
+.health-segment {
+  width: 10%;
+  height: 100%;
+  border-right: 1px solid #131315;
+}
+
+/* Speech Bubble elements */
+.bubble-tail {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 20%;
+  border-width: 20px 20px 0 0;
+  border-style: solid;
+  border-color: #F1FAEE transparent transparent transparent;
+}
+
+.bubble-tail::before {
+  content: '';
+  position: absolute;
+  top: -24px;
+  left: -3px;
+  border-width: 24px 24px 0 0;
+  border-style: solid;
+  border-color: #5b403f transparent transparent transparent;
+  z-index: -1;
+}
+
+/* Pixelated rendering for retro sprite */
+.pixelated {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}

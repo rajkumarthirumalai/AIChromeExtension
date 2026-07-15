@@ -1,67 +1,10 @@
 // Oji-San AI Focus Extension - Background Service Worker
-
-const systemPrompt = `
-You are Master Oji-San, the legendary, strict, and slightly eccentric grandmaster of the 36th Chamber of Code. Your job is to monitor your disciple's (the user's) web browsing and ensure they are staying focused on their goal.
-
-You will be given the User's Focus Goal, the Title of the webpage they just opened, and the URL.
-
-Step 1: Evaluate the Context.
-Determine if the webpage is genuinely helping them achieve their goal. 
-- If their goal is "Learn React" and they are on a YouTube video titled "React Hooks Tutorial", that IS productive.
-- If their goal is "Learn React" and they are on a YouTube video titled "Top 10 Anime Betrayals", that IS NOT productive.
-- Social media (Twitter, Instagram, Reddit) and streaming sites (Netflix, Hulu) are almost always unproductive unless explicitly related to the goal.
-
-Step 2: Generate the Output.
-Return a strict JSON object (do not return any markdown or other text).
-{
-  "isProductive": boolean,
-  "scoldingMessage": string
-}
-
-If 'isProductive' is true, the 'scoldingMessage' should be empty ("").
-
-If 'isProductive' is false, generate a 'scoldingMessage' speaking strictly in the persona of Master Oji-San. 
-Rules for the scolding message:
-- Start with an insult to their discipline (e.g., "Foolish disciple!", "Dishonor!", "Weak focus!").
-- Relate their distraction (the webpage title) to martial arts or ancient training.
-- Be dramatic, funny, and strict. Do not be polite.
-- Keep it under 3 sentences.
-
-Example Scolding Messages:
-- "Foolish disciple! You claim you wish to learn Python, yet I catch you staring at 'Cat fails compilation' on YouTube! Your discipline is weaker than a wet noodle. Close this tab before I make you punch a tree for 10 hours!"
-- "Dishonor to your keyboard! Netflix will not teach you the Way of the Code. A true master builds, he does not binge-watch. Return to your studies immediately!"
-- "Ah, I see. You think scrolling through Reddit will strengthen your mind? The only thing getting stronger is your ability to fail your goals. Leave this place!"
-`;
+import { systemPrompt, multiPurposeDomains } from './background/config';
+import { getProvider } from './background/providers';
+import { getHostname, getDomain } from './background/cache';
 
 // Set to track active API evaluations in-flight and prevent race condition duplicate calls
 const inFlightEvaluations = new Set<string>();
-
-// List of multi-purpose domains that must be screened at URL-level rather than blocked domain-wide
-const multiPurposeDomains = ['youtube.com', 'github.com', 'google.com', 'wikipedia.org', 'localhost', '127.0.0.1'];
-
-// Helper to extract hostname from URL
-function getHostname(urlStr: string): string {
-  try {
-    const url = new URL(urlStr);
-    return url.hostname;
-  } catch {
-    return '';
-  }
-}
-
-// Helper to extract registered domain (second-level domain, e.g., keka.com)
-function getDomain(urlStr: string): string {
-  try {
-    const hostname = getHostname(urlStr);
-    const parts = hostname.split('.');
-    if (parts.length >= 2) {
-      return parts.slice(-2).join('.');
-    }
-    return hostname;
-  } catch {
-    return '';
-  }
-}
 
 // Reusable tab evaluation logic with persistent URL/Domain caching and race-condition prevention
 async function evaluateTab(tabId: number, tab: chrome.tabs.Tab) {
@@ -149,6 +92,8 @@ async function evaluateTab(tabId: number, tab: chrome.tabs.Tab) {
 
       // Verify active key is configured
       const activeKey = aiProvider === 'groq' ? groqApiKey : geminiApiKey;
+      const activeModel = aiProvider === 'groq' ? groqModel : geminiModel;
+      
       if (!activeKey) {
         console.warn(`[Oji-San] Focus mode is active, but ${aiProvider.toUpperCase()} API key is missing. Please configure it in the Dojo Dashboard settings.`);
         return;
@@ -177,96 +122,14 @@ async function evaluateTab(tabId: number, tab: chrome.tabs.Tab) {
         console.log(`[Oji-San] Evaluating page via ${aiProvider.toUpperCase()} | Goal: "${focusGoal}" | URL: ${url}`);
 
         try {
-          let evaluation: { isProductive: boolean; scoldingMessage: string };
+          // Resolve provider through Factory interface
+          const provider = getProvider(aiProvider, {
+            apiKey: activeKey,
+            model: activeModel,
+            systemPrompt: systemPrompt
+          });
 
-          if (aiProvider === 'groq') {
-            const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${groqApiKey}`
-              },
-              body: JSON.stringify({
-                model: groqModel || 'openai/gpt-oss-20b',
-                messages: [
-                  {
-                    role: 'system',
-                    content: systemPrompt
-                  },
-                  {
-                    role: 'user',
-                    content: `User Focus Goal: "${focusGoal}"\nWebpage Title: "${tab.title || ''}"\nURL: "${url}"`
-                  }
-                ],
-                response_format: {
-                  type: 'json_object'
-                },
-                temperature: 0.2
-              })
-            });
-
-            if (!response.ok) {
-              throw new Error(`Groq API returned status ${response.status}`);
-            }
-
-            const resData = await response.json();
-            const contentStr = resData.choices?.[0]?.message?.content;
-            if (!contentStr) {
-              throw new Error('Empty response from Groq');
-            }
-            evaluation = JSON.parse(contentStr) as { isProductive: boolean; scoldingMessage: string };
-          } else {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiModel || 'gemini-2.5-flash'}:generateContent?key=${geminiApiKey}`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                contents: [
-                  {
-                    parts: [
-                      {
-                        text: `User Focus Goal: "${focusGoal}"\nWebpage Title: "${tab.title || ''}"\nURL: "${url}"`,
-                      },
-                    ],
-                  },
-                ],
-                systemInstruction: {
-                  parts: [
-                    {
-                      text: systemPrompt,
-                    },
-                  ],
-                },
-                generationConfig: {
-                  responseMimeType: 'application/json',
-                  responseSchema: {
-                    type: 'OBJECT',
-                    properties: {
-                      isProductive: {
-                        type: 'BOOLEAN',
-                      },
-                      scoldingMessage: {
-                        type: 'STRING',
-                      },
-                    },
-                    required: ['isProductive', 'scoldingMessage'],
-                  },
-                },
-              }),
-            });
-
-            if (!response.ok) {
-              throw new Error(`Gemini API returned status ${response.status}`);
-            }
-
-            const resData = await response.json();
-            const contentStr = resData.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (!contentStr) {
-              throw new Error('Empty response from Gemini');
-            }
-            evaluation = JSON.parse(contentStr) as { isProductive: boolean; scoldingMessage: string };
-          }
+          const evaluation = await provider.evaluate(focusGoal, tab.title || '', url);
 
           // Increment evaluated pages counter
           const nextEvaluated = (Number(pagesEvaluated) || 0) + 1;

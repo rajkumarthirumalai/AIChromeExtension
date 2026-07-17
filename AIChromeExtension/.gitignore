@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Keep build zip file tracked
+!oji-san-dojo.zip
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -6,6 +6,21 @@ Powered by **Google Gemini** and **Groq Cloud** APIs, Oji-San monitors your web 
 
 ---
 
+## 📦 Quick Install (No Build Required)
+
+For easy sharing with college students and professors, a pre-compiled version of the extension is committed directly in this repository:
+
+1. **Download the Zip**: Download [oji-san-dojo.zip](./oji-san-dojo.zip) from the repository root.
+2. **Unzip**: Extract the zip archive onto your computer (it will create a `dist` folder).
+3. **Load in Chrome**:
+   - Go to `chrome://extensions/` in Google Chrome.
+   - Enable **Developer mode** (toggle in the top-right corner).
+   - Click **Load unpacked** in the top-left.
+   - Select the extracted `dist` folder.
+4. **Configure Settings**: Click the Oji-San icon in your extension bar, click the Gear icon, enter your API key (Gemini/Groq), set your Focus Goal, open the Dojo Gate, and start sparring!
+
+---
+
 ## 📊 Understanding Sparring Stats
 
 Your progress is monitored in real-time in the Dojo Dashboard:

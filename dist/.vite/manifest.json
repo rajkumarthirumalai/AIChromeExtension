@@ -1,0 +1,43 @@
+{
+  "../../../../../@crx/manifest": {
+    "file": "assets/crx-manifest.js-BS0n33C8.js",
+    "name": "crx-manifest.js",
+    "src": "../../../../../@crx/manifest",
+    "isEntry": true
+  },
+  "_createLucideIcon-fXvbFTNE.js": {
+    "file": "assets/createLucideIcon-fXvbFTNE.js",
+    "name": "createLucideIcon"
+  },
+  "content.tsx-loader.js": {
+    "file": "assets/content.tsx-loader-Dfq_LD2E.js",
+    "src": "content.tsx-loader.js"
+  },
+  "index.html": {
+    "file": "assets/index.html-B8jxm4nT.js",
+    "name": "index.html",
+    "src": "index.html",
+    "isEntry": true,
+    "imports": [
+      "_createLucideIcon-fXvbFTNE.js"
+    ],
+    "css": [
+      "assets/index-wlC0rCPH.css"
+    ]
+  },
+  "src/background.ts": {
+    "file": "assets/background.ts-D4MPs7zS.js",
+    "name": "background.ts",
+    "src": "src/background.ts",
+    "isEntry": true
+  },
+  "src/content.tsx": {
+    "file": "assets/content.tsx-D4cSqIF4.js",
+    "name": "content.tsx",
+    "src": "src/content.tsx",
+    "isEntry": true,
+    "imports": [
+      "_createLucideIcon-fXvbFTNE.js"
+    ]
+  }
+}

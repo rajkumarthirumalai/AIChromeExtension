@@ -41,6 +41,7 @@ You will be given the User's Focus Goal, the Title of the webpage, the URL, and 
 
 Evaluate their excuse strictly. Does this page genuinely help them achieve their goal based on their excuse?
 - If their excuse is logical and necessary (e.g., they need a specific YouTube video for a tutorial), ACCEPT it.
+- META-PRODUCTIVITY RULE: Always ACCEPT excuses related to recording, screenshotting, sharing, submitting hackathon projects, or managing productivity tools (e.g., "I am uploading a demo video", "I need to share a screenshot", "Hackathon submission").
 - If their excuse is weak, lazy, or a clear attempt at procrastination (e.g., "I just need a break", "it's funny"), REJECT it.
 
 Return a strict JSON object (do not return any markdown or other text).

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AlertTriangle, History, Hand } from 'lucide-react';
-import { angryBase64, thinkingBase64, proudBase64 } from '../../assets/oji-san-states';
+import { angryBase64, thinkingBase64, proudBase64, shockedBase64 } from '../../assets/oji-san-states';
 
 interface InterventionOverlayProps {
   message: string;
@@ -31,16 +31,37 @@ const sendMessageSafe = (message: any, callback?: (response: any) => void) => {
 export const InterventionOverlay: React.FC<InterventionOverlayProps> = ({ message, onClose }) => {
   const [scoldMessage, setScoldMessage] = useState(message);
   const [imageState, setImageState] = useState(angryBase64);
+  const [mode, setMode] = useState<'scolding' | 'negotiating'>('scolding');
+  const [excuse, setExcuse] = useState('');
+  const [isEvaluating, setIsEvaluating] = useState(false);
 
   useEffect(() => {
     setScoldMessage(message);
   }, [message]);
 
-  const handleBypass = () => {
-    sendMessageSafe({ action: 'bypassUrl' }, (response) => {
-      if (response && response.success) {
-        console.log('[Oji-San] Bypass approved.');
+  const handleSubmitExcuse = () => {
+    if (!excuse.trim() || isEvaluating) return;
+    setIsEvaluating(true);
+    setImageState(thinkingBase64);
+    
+    sendMessageSafe({ action: 'submitExcuse', excuse }, (response) => {
+      setIsEvaluating(false);
+      if (response && response.accepted) {
         onClose();
+      } else if (response && !response.accepted) {
+        setScoldMessage(response.roastMessage || "Weak excuse. Denied!");
+        setImageState(shockedBase64);
+        setMode('scolding');
+        setExcuse('');
+        
+        // Return to angry state after 3 seconds
+        setTimeout(() => {
+          setImageState(angryBase64);
+        }, 3000);
+      } else {
+        setScoldMessage("Your excuse was lost in the wind. Try again.");
+        setImageState(angryBase64);
+        setMode('scolding');
       }
     });
   };
@@ -92,28 +113,66 @@ export const InterventionOverlay: React.FC<InterventionOverlayProps> = ({ messag
         </div>
 
         {/* Action Buttons Footer */}
-        <div className="bg-[#201f21] border-t-2 border-[#bb152c] flex flex-col md:flex-row justify-center items-center" style={{ padding: '24px', gap: '24px' }}>
-          <button 
-            onMouseEnter={() => setImageState(thinkingBase64)}
-            onMouseLeave={() => setImageState(angryBase64)}
-            onClick={handleBypass}
-            className="bg-[#353437] text-[#e5e1e4] text-sm uppercase border-2 border-[#5b403f] hover:border-[#fbb400] hover:text-[#fbb400] transition-all duration-150 flex items-center justify-center tracking-widest hover:shadow-[0_0_10px_rgba(251,180,0,0.3)] rounded-md"
-            style={{ fontFamily: 'ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace', padding: '16px 24px', gap: '8px' }}
-          >
-            <History className="w-5 h-5 shrink-0" />
-            Request Bypass
-          </button>
+        <div className="bg-[#201f21] border-t-2 border-[#bb152c] flex flex-col md:flex-row justify-center items-center relative min-h-[100px]" style={{ padding: '24px', gap: '24px' }}>
           
-          <button 
-            onMouseEnter={() => setImageState(proudBase64)}
-            onMouseLeave={() => setImageState(angryBase64)}
-            onClick={handleCloseTab}
-            className="bg-[#bb152c] text-[#F1FAEE] text-sm uppercase font-bold border-2 border-[#bb152c] hover:bg-[#410007] hover:border-[#bb152c] transition-all duration-150 flex items-center justify-center tracking-widest shadow-[0_0_15px_rgba(187,21,44,0.6)] hover:shadow-[0_0_25px_rgba(187,21,44,0.8)] rounded-md"
-            style={{ fontFamily: 'ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace', padding: '16px 24px', gap: '8px' }}
-          >
-            <Hand className="w-5 h-5 shrink-0" />
-            Forgive me (Close Tab)
-          </button>
+          {mode === 'scolding' ? (
+            <>
+              <button 
+                onMouseEnter={() => setImageState(thinkingBase64)}
+                onMouseLeave={() => setImageState(angryBase64)}
+                onClick={() => setMode('negotiating')}
+                className="bg-[#353437] text-[#e5e1e4] text-sm uppercase border-2 border-[#5b403f] hover:border-[#fbb400] hover:text-[#fbb400] transition-all duration-150 flex items-center justify-center tracking-widest hover:shadow-[0_0_10px_rgba(251,180,0,0.3)] rounded-md"
+                style={{ fontFamily: 'ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace', padding: '16px 24px', gap: '8px' }}
+              >
+                <History className="w-5 h-5 shrink-0" />
+                Plead Case (Trial)
+              </button>
+              
+              <button 
+                onMouseEnter={() => setImageState(proudBase64)}
+                onMouseLeave={() => setImageState(angryBase64)}
+                onClick={handleCloseTab}
+                className="bg-[#bb152c] text-[#F1FAEE] text-sm uppercase font-bold border-2 border-[#bb152c] hover:bg-[#410007] hover:border-[#bb152c] transition-all duration-150 flex items-center justify-center tracking-widest shadow-[0_0_15px_rgba(187,21,44,0.6)] hover:shadow-[0_0_25px_rgba(187,21,44,0.8)] rounded-md"
+                style={{ fontFamily: 'ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace', padding: '16px 24px', gap: '8px' }}
+              >
+                <Hand className="w-5 h-5 shrink-0" />
+                Forgive me (Close Tab)
+              </button>
+            </>
+          ) : (
+            <div className="flex w-full flex-col md:flex-row gap-4 items-center">
+              <input 
+                type="text"
+                value={excuse}
+                onChange={(e) => setExcuse(e.target.value)}
+                disabled={isEvaluating}
+                placeholder="Convince me you need this..."
+                className="flex-1 bg-[#131315] border-2 border-[#5b403f] text-[#e5e1e4] rounded-md focus:outline-none focus:border-[#fbb400] transition-colors"
+                style={{ padding: '16px', fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSubmitExcuse();
+                }}
+              />
+              <div className="flex gap-4 shrink-0">
+                <button 
+                  onClick={() => setMode('scolding')}
+                  disabled={isEvaluating}
+                  className="bg-[#353437] text-[#e5e1e4] text-sm uppercase border-2 border-[#5b403f] hover:border-[#e5e1e4] transition-all duration-150 flex items-center justify-center rounded-md disabled:opacity-50"
+                  style={{ fontFamily: 'ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace', padding: '16px 24px' }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleSubmitExcuse}
+                  disabled={isEvaluating || !excuse.trim()}
+                  className="bg-[#fbb400] text-[#131315] font-bold text-sm uppercase border-2 border-[#fbb400] hover:bg-[#ffdea9] hover:border-[#ffdea9] transition-all duration-150 flex items-center justify-center rounded-md shadow-[0_0_15px_rgba(251,180,0,0.4)] disabled:opacity-50"
+                  style={{ fontFamily: 'ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace', padding: '16px 24px' }}
+                >
+                  {isEvaluating ? 'Evaluating...' : 'Submit'}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

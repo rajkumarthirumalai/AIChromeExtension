@@ -9,57 +9,63 @@
     "file": "assets/createLucideIcon-fXvbFTNE.js",
     "name": "createLucideIcon"
   },
+  "_oji-san-states-DeIkGr94.js": {
+    "file": "assets/oji-san-states-DeIkGr94.js",
+    "name": "oji-san-states"
+  },
   "_storage-!~{004}~.js": {
-    "file": "assets/storage-B7dX1Ko4.css",
+    "file": "assets/storage-tNvlhNOG.css",
     "src": "_storage-!~{004}~.js"
   },
-  "_storage-vVfR6XTl.js": {
-    "file": "assets/storage-vVfR6XTl.js",
+  "_storage-D3uu3edK.js": {
+    "file": "assets/storage-D3uu3edK.js",
     "name": "storage",
     "imports": [
       "_createLucideIcon-fXvbFTNE.js"
     ],
     "css": [
-      "assets/storage-B7dX1Ko4.css"
+      "assets/storage-tNvlhNOG.css"
     ]
   },
   "content.tsx-loader.js": {
-    "file": "assets/content.tsx-loader-Boa8RGXr.js",
+    "file": "assets/content.tsx-loader-Byj8Esxb.js",
     "src": "content.tsx-loader.js"
   },
   "index.html": {
-    "file": "assets/index.html-CSqna6m5.js",
+    "file": "assets/index.html-C_OM9Scb.js",
     "name": "index.html",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_storage-vVfR6XTl.js",
+      "_storage-D3uu3edK.js",
       "_createLucideIcon-fXvbFTNE.js"
     ]
   },
   "options.html": {
-    "file": "assets/options.html-CgVcQrtp.js",
+    "file": "assets/options.html-70jycToa.js",
     "name": "options.html",
     "src": "options.html",
     "isEntry": true,
     "imports": [
-      "_storage-vVfR6XTl.js",
-      "_createLucideIcon-fXvbFTNE.js"
+      "_storage-D3uu3edK.js",
+      "_createLucideIcon-fXvbFTNE.js",
+      "_oji-san-states-DeIkGr94.js"
     ]
   },
   "src/background.ts": {
-    "file": "assets/background.ts-CP_tM4AE.js",
+    "file": "assets/background.ts-CI7IbwlR.js",
     "name": "background.ts",
     "src": "src/background.ts",
     "isEntry": true
   },
   "src/content.tsx": {
-    "file": "assets/content.tsx-Cn-sp22m.js",
+    "file": "assets/content.tsx-CoZgkDJ7.js",
     "name": "content.tsx",
     "src": "src/content.tsx",
     "isEntry": true,
     "imports": [
-      "_createLucideIcon-fXvbFTNE.js"
+      "_createLucideIcon-fXvbFTNE.js",
+      "_oji-san-states-DeIkGr94.js"
     ]
   }
 }

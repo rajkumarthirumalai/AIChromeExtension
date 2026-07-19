@@ -44,4 +44,51 @@ export class GroqProvider extends LLMProvider {
 
     return JSON.parse(contentStr) as { isProductive: boolean; scoldingMessage: string };
   }
+
+  async evaluateExcuse(
+    goal: string,
+    title: string,
+    url: string,
+    excuse: string
+  ): Promise<{ excuseAccepted: boolean; roastMessage: string }> {
+    const modelName = this.model || 'openai/gpt-oss-20b';
+    const { excusePrompt } = await import('../config');
+
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.apiKey}`
+      },
+      body: JSON.stringify({
+        model: modelName,
+        messages: [
+          {
+            role: 'system',
+            content: excusePrompt
+          },
+          {
+            role: 'user',
+            content: `User Focus Goal: "${goal}"\nWebpage Title: "${title}"\nURL: "${url}"\nUser's Excuse: "${excuse}"`
+          }
+        ],
+        response_format: {
+          type: 'json_object'
+        },
+        temperature: 0.2
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Groq API returned status ${response.status}`);
+    }
+
+    const resData = await response.json();
+    const contentStr = resData.choices?.[0]?.message?.content;
+    if (!contentStr) {
+      throw new Error('Empty response from Groq');
+    }
+
+    return JSON.parse(contentStr) as { excuseAccepted: boolean; roastMessage: string };
+  }
 }

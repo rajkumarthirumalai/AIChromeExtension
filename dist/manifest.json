@@ -27,7 +27,7 @@
   "content_scripts": [
     {
       "js": [
-        "assets/content.tsx-loader-Boa8RGXr.js"
+        "assets/content.tsx-loader-Byj8Esxb.js"
       ],
       "matches": [
         "<all_urls>"
@@ -50,7 +50,8 @@
       ],
       "resources": [
         "assets/createLucideIcon-fXvbFTNE.js",
-        "assets/content.tsx-Cn-sp22m.js"
+        "assets/oji-san-states-DeIkGr94.js",
+        "assets/content.tsx-CoZgkDJ7.js"
       ],
       "use_dynamic_url": false
     }

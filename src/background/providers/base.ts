@@ -22,4 +22,11 @@ export abstract class LLMProvider {
     title: string, 
     url: string
   ): Promise<{ isProductive: boolean; scoldingMessage: string }>;
+
+  abstract evaluateExcuse(
+    goal: string, 
+    title: string, 
+    url: string,
+    excuse: string
+  ): Promise<{ excuseAccepted: boolean; roastMessage: string }>;
 }

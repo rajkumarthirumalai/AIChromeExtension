@@ -46,29 +46,6 @@
   box-shadow: 0 0 40px rgba(187, 21, 44, 0.4);
 }
 
-/* Health Bar (Focus Stamina) */
-.health-bar-container {
-  border: 3px solid #5b403f;
-  background-color: #131315;
-  height: 24px;
-  width: 100%;
-  position: relative;
-}
-
-.health-bar-fill {
-  height: 100%;
-  background-color: #30a193; /* Jade Green for high stamina */
-  display: flex;
-  align-items: center;
-  transition: width 0.3s ease;
-}
-
-.health-segment {
-  width: 10%;
-  height: 100%;
-  border-right: 1px solid #131315;
-}
-
 /* Speech Bubble elements */
 .bubble-tail {
   content: '';

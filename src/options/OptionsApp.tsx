@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Save, RotateCcw, Trash2, Key, Cpu, CheckCircle2, AlertCircle, Sparkles } from 'lucide-react';
 import { getStorageData, setStorageData } from '../utils/storage';
-import { ojiSanBase64 } from '../assets/oji-san-base64';
+import { proudBase64 } from '../assets/oji-san-states';
 
 interface ToastState {
   show: boolean;
@@ -202,7 +202,7 @@ export default function OptionsApp() {
             <div className="w-40 h-40 bg-surface-container-lowest border-[3px] border-outline-variant p-2 retro-shadow-secondary flex items-center justify-center relative overflow-hidden bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiMxYjFiMWQiIGZpbGwtb3BhY2l0eT0iMC41Ii8+PC9zdmc+')]">
               <img
                 className="w-full h-full object-cover pixelated"
-                src={ojiSanBase64}
+                src={proudBase64}
                 alt="Master Oji-San Sensei"
               />
               <div className="absolute bottom-[-1px] right-[-1px] bg-inverse-primary border-t-[3px] border-l-[3px] border-outline-variant px-2 py-0.5">

@@ -279,6 +279,59 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     } else {
       sendResponse({ success: false, error: 'Invalid URL' });
     }
+  } else if (message.action === 'submitExcuse' && sender.tab?.url && sender.tab?.title) {
+    const url = sender.tab.url;
+    const title = sender.tab.title;
+    const excuse = message.excuse;
+
+    chrome.storage.local.get(
+      ['focusGoal', 'geminiApiKey', 'geminiModel', 'groqApiKey', 'groqModel', 'aiProvider'],
+      async (data) => {
+        const focusGoal = String(data.focusGoal || '');
+        const geminiApiKey = String(data.geminiApiKey || '');
+        const geminiModel = String(data.geminiModel || 'gemini-2.5-flash');
+        const groqApiKey = String(data.groqApiKey || '');
+        const groqModel = String(data.groqModel || 'openai/gpt-oss-20b');
+        const aiProvider = String(data.aiProvider || 'gemini');
+
+        const activeKey = aiProvider === 'groq' ? groqApiKey : geminiApiKey;
+        const activeModel = aiProvider === 'groq' ? groqModel : geminiModel;
+
+        if (!activeKey) {
+          sendResponse({ success: false, error: 'API Key missing' });
+          return;
+        }
+
+        try {
+          const provider = getProvider(aiProvider, {
+            apiKey: activeKey,
+            model: activeModel,
+            systemPrompt: systemPrompt
+          });
+
+          const result = await provider.evaluateExcuse(focusGoal, title, url, excuse);
+
+          if (result.excuseAccepted) {
+            const hostname = getHostname(url);
+            const domain = getDomain(url);
+            if (hostname) {
+              chrome.storage.local.get(['bypassUrls'], (bwData) => {
+                const whitelisted = Array.isArray(bwData.bypassUrls) ? bwData.bypassUrls : [];
+                if (!whitelisted.includes(hostname)) whitelisted.push(hostname);
+                if (domain && !whitelisted.includes(domain)) whitelisted.push(domain);
+                chrome.storage.local.set({ bypassUrls: whitelisted });
+              });
+            }
+          }
+
+          sendResponse({ success: true, accepted: result.excuseAccepted, roastMessage: result.roastMessage });
+        } catch (err) {
+          console.error('[Oji-San] Excuse evaluation failed:', err);
+          sendResponse({ success: false, error: 'Evaluation failed' });
+        }
+      }
+    );
+    return true;
   } else if (message.action === 'openOptions') {
     if (chrome.runtime.openOptionsPage) {
       chrome.runtime.openOptionsPage();

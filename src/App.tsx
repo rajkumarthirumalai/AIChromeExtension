@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Settings } from 'lucide-react';
 import { getStorageData, setStorageData } from './utils/storage';
-import { SettingsPanel } from './popup/components/SettingsPanel';
 import { ShieldToggle } from './popup/components/ShieldToggle';
 import { StatsSection } from './popup/components/StatsSection';
 import { GoalInput } from './popup/components/GoalInput';
@@ -9,15 +8,9 @@ import { GoalInput } from './popup/components/GoalInput';
 export default function App() {
   const [focusMode, setFocusMode] = useState<boolean>(false);
   const [focusGoal, setFocusGoal] = useState<string>('');
-  const [apiKey, setApiKey] = useState<string>(''); // Maps to geminiApiKey
-  const [geminiModel, setGeminiModel] = useState<string>('gemini-2.5-flash');
-  const [groqApiKey, setGroqApiKey] = useState<string>('');
-  const [groqModel, setGroqModel] = useState<string>('openai/gpt-oss-20b');
-  const [aiProvider, setAiProvider] = useState<string>('gemini');
   const [pagesEvaluated, setPagesEvaluated] = useState<number>(0);
   const [distractionsSlashed, setDistractionsSlashed] = useState<number>(0);
   const [ytShield, setYtShield] = useState<boolean>(false);
-  const [showSettings, setShowSettings] = useState<boolean>(false);
 
   // Load state on mount
   useEffect(() => {
@@ -25,27 +18,34 @@ export default function App() {
       const data = await getStorageData([
         'focusMode',
         'focusGoal',
-        'geminiApiKey',
-        'geminiModel',
-        'groqApiKey',
-        'groqModel',
-        'aiProvider',
         'pagesEvaluated',
         'distractionsSlashed',
         'ytShield',
       ]);
       setFocusMode(!!data.focusMode);
       setFocusGoal(data.focusGoal || '');
-      setApiKey(data.geminiApiKey || '');
-      setGeminiModel(data.geminiModel || 'gemini-2.5-flash');
-      setGroqApiKey(data.groqApiKey || '');
-      setGroqModel(data.groqModel || 'openai/gpt-oss-20b');
-      setAiProvider(data.aiProvider || 'gemini');
       setPagesEvaluated(Number(data.pagesEvaluated) || 0);
       setDistractionsSlashed(Number(data.distractionsSlashed) || 0);
       setYtShield(!!data.ytShield);
     };
+    
     loadState();
+
+    // Dynamically listen for stats changes (e.g. if reset from Options page)
+    const handleStorageChange = (changes: { [key: string]: chrome.storage.StorageChange }, areaName: string) => {
+      if (areaName === 'local') {
+        if (changes.pagesEvaluated) setPagesEvaluated(changes.pagesEvaluated.newValue !== undefined ? Number(changes.pagesEvaluated.newValue) : 0);
+        if (changes.distractionsSlashed) setDistractionsSlashed(changes.distractionsSlashed.newValue !== undefined ? Number(changes.distractionsSlashed.newValue) : 0);
+        if (changes.focusGoal) setFocusGoal(changes.focusGoal.newValue !== undefined ? String(changes.focusGoal.newValue) : '');
+        if (changes.focusMode) setFocusMode(!!changes.focusMode.newValue);
+        if (changes.ytShield) setYtShield(!!changes.ytShield.newValue);
+      }
+    };
+
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged) {
+      chrome.storage.onChanged.addListener(handleStorageChange);
+      return () => chrome.storage.onChanged.removeListener(handleStorageChange);
+    }
   }, []);
 
   // Save states on change
@@ -61,50 +61,19 @@ export default function App() {
     await setStorageData({ ytShield: nextYt });
   };
 
-  const handleGoalChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    setFocusGoal(val);
-    await setStorageData({ focusGoal: val });
+  const handleSaveGoal = async (newGoal: string) => {
+    setFocusGoal(newGoal);
+    await setStorageData({ focusGoal: newGoal });
   };
 
-  const handleApiKeyChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    setApiKey(val);
-    await setStorageData({ geminiApiKey: val });
-  };
-
-  const handleGeminiModelChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const val = e.target.value;
-    setGeminiModel(val);
-    await setStorageData({ geminiModel: val });
-  };
-
-  const handleGroqApiKeyChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    setGroqApiKey(val);
-    await setStorageData({ groqApiKey: val });
-  };
-
-  const handleGroqModelChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const val = e.target.value;
-    setGroqModel(val);
-    await setStorageData({ groqModel: val });
-  };
-
-  const handleAiProviderChange = async (val: string) => {
-    setAiProvider(val);
-    await setStorageData({ aiProvider: val });
-  };
-
-  const handleResetStats = async () => {
-    setPagesEvaluated(0);
-    setDistractionsSlashed(0);
-    await setStorageData({ pagesEvaluated: 0, distractionsSlashed: 0 });
-  };
-
-  const handleClearCache = async () => {
-    await setStorageData({ evaluationCache: {}, domainCache: {} });
-    alert('Dojo Cache Cleared!');
+  // Open Options page
+  const handleOpenSettings = () => {
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.openOptionsPage) {
+      chrome.runtime.openOptionsPage();
+    } else {
+      // Fallback for local web testing
+      window.open('options.html', '_blank');
+    }
   };
 
   // Determine discipline title based on stats
@@ -133,10 +102,9 @@ export default function App() {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => setShowSettings(!showSettings)}
-            className={`cursor-pointer hover:text-secondary-container transition-colors flex items-center justify-center ${
-              showSettings ? 'text-secondary-container' : 'text-muted'
-            }`}
+            onClick={handleOpenSettings}
+            className="cursor-pointer text-muted hover:text-secondary-container transition-colors flex items-center justify-center"
+            title="Open Dojo Command Center (Settings)"
           >
             <Settings className="w-6 h-6" />
           </button>
@@ -145,24 +113,7 @@ export default function App() {
 
       {/* Main Content */}
       <main className="flex-1 p-4 flex flex-col gap-4 bg-surface">
-        {/* Settings Expander */}
-        {showSettings && (
-          <SettingsPanel
-            apiKey={apiKey}
-            geminiModel={geminiModel}
-            groqApiKey={groqApiKey}
-            groqModel={groqModel}
-            aiProvider={aiProvider}
-            onApiKeyChange={handleApiKeyChange}
-            onGeminiModelChange={handleGeminiModelChange}
-            onGroqApiKeyChange={handleGroqApiKeyChange}
-            onGroqModelChange={handleGroqModelChange}
-            onAiProviderChange={handleAiProviderChange}
-            onResetStats={handleResetStats}
-            onClearCache={handleClearCache}
-          />
-        )}
-
+        
         {/* Dojo Gate Toggle */}
         <ShieldToggle
           title="Dojo Gate"
@@ -187,7 +138,7 @@ export default function App() {
         />
 
         {/* Training Goal Input */}
-        <GoalInput value={focusGoal} onChange={handleGoalChange} />
+        <GoalInput value={focusGoal} onSave={handleSaveGoal} />
 
         {/* Sparring Stats */}
         <StatsSection

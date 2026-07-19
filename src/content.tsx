@@ -5,6 +5,11 @@ import { createShadowContainer } from './content/shadow';
 import { applyYoutubeShield } from './content/youtube';
 import styleText from './index.css?inline';
 
+const fontsCSS = `
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=JetBrains+Mono:wght@500&family=Outfit:wght@400&display=swap');
+`;
+
 // Injection helper function
 const injectOverlay = (message: string) => {
   // Check if already injected
@@ -13,7 +18,7 @@ const injectOverlay = (message: string) => {
     return;
   }
 
-  const shadow = createShadowContainer(styleText);
+  const shadow = createShadowContainer(fontsCSS + styleText);
   const root = createRoot(shadow.appContainer);
 
   const handleClose = () => {

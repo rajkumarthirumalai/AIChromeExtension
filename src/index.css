@@ -1,8 +1,6 @@
 @tailwind base;
 @tailwind components;
-@tailwind utilities;
-
-/* 16-bit retro arcade aesthetic utilities */
+@tailwind utilities;/* 16-bit retro arcade aesthetic utilities */
 .retro-border {
   border: 3px solid #5b403f; /* outline-variant */
   box-shadow: 4px 4px 0px 0px #000;
@@ -75,26 +73,82 @@
 .bubble-tail {
   content: '';
   position: absolute;
-  bottom: -20px;
-  left: 20%;
-  border-width: 20px 20px 0 0;
+  left: -20px;
+  top: 40px;
+  border-width: 15px 20px 15px 0;
   border-style: solid;
-  border-color: #F1FAEE transparent transparent transparent;
+  border-color: transparent #1b1b1d transparent transparent;
 }
 
 .bubble-tail::before {
   content: '';
   position: absolute;
-  top: -24px;
+  top: -18px;
   left: -3px;
-  border-width: 24px 24px 0 0;
+  border-width: 18px 23px 18px 0;
   border-style: solid;
-  border-color: #5b403f transparent transparent transparent;
+  border-color: transparent #5b403f transparent transparent;
   z-index: -1;
+}
+
+@media (max-width: 768px) {
+  .bubble-tail {
+    left: 20%;
+    top: -20px;
+    border-width: 0 15px 20px 15px;
+    border-color: transparent transparent #1b1b1d transparent;
+  }
+  .bubble-tail::before {
+    top: -23px;
+    left: -18px;
+    border-width: 0 18px 23px 18px;
+    border-color: transparent transparent #5b403f transparent;
+  }
 }
 
 /* Pixelated rendering for retro sprite */
 .pixelated {
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+}
+
+/* Cyberpunk utilities */
+.cyber-shadow-primary { box-shadow: 4px 4px 0px 0px rgba(187, 21, 44, 1); }
+.cyber-shadow-secondary { box-shadow: 4px 4px 0px 0px rgba(251, 180, 0, 0.4); }
+.cyber-shadow-container { box-shadow: 0 0 15px 2px rgba(187, 21, 44, 0.8), inset 0 0 10px rgba(187, 21, 44, 0.5); border: 2px solid #bb152c; }
+.glow-crimson { box-shadow: 0 0 40px rgba(187, 21, 44, 0.6), inset 0 0 20px rgba(187, 21, 44, 0.3); border: 2px solid #bb152c; }
+
+/* Scanline effect */
+.scanlines {
+    position: relative;
+    background-image: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0),
+        rgba(255,255,255,0) 50%,
+        rgba(0,0,0,0.2) 50%,
+        rgba(0,0,0,0.2)
+    );
+    background-size: 100% 4px;
+}
+
+.hologram-frame {
+    box-shadow: 0 0 15px rgba(111, 216, 200, 0.6), inset 0 0 10px rgba(111, 216, 200, 0.3);
+    border: 2px solid #6fd8c8;
+    background-color: rgba(14, 14, 16, 0.8);
+    position: relative;
+}
+
+.hologram-frame::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(111, 216, 200, 0.1) 2px,
+        rgba(111, 216, 200, 0.1) 4px
+    );
+    pointer-events: none;
+    z-index: 10;
 }

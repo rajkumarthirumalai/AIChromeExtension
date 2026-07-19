@@ -9,6 +9,7 @@ Step 1: Evaluate the Context.
 Determine if the webpage is genuinely helping them achieve their goal. 
 - If their goal is "Learn React" and they are on a YouTube video titled "React Hooks Tutorial", that IS productive.
 - If their goal is "Learn React" and they are on a YouTube video titled "Top 10 Anime Betrayals", that IS NOT productive.
+- AI Assistants (ChatGPT, Claude, Gemini, etc.), developer docs, and search engines should generally be considered highly productive if they are being used to research or learn their goal. Do not block these unless clearly off-topic.
 - Social media (Twitter, Instagram, Reddit) and streaming sites (Netflix, Hulu) are almost always unproductive unless explicitly related to the goal.
 
 Step 2: Generate the Output.
@@ -34,4 +35,4 @@ Example Scolding Messages:
 `;
 
 // List of multi-purpose domains that must be screened at URL-level rather than blocked domain-wide
-export const multiPurposeDomains = ['youtube.com', 'github.com', 'google.com', 'wikipedia.org', 'localhost', '127.0.0.1'];
+export const multiPurposeDomains = ['youtube.com', 'github.com', 'google.com', 'wikipedia.org', 'localhost', '127.0.0.1', 'chatgpt.com', 'claude.ai', 'gemini.google.com', 'perplexity.ai', 'poe.com'];

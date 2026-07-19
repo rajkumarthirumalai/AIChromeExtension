@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { AlertTriangle, Gavel, History, Hand } from 'lucide-react';
-import { ojiSanBase64 } from '../../assets/oji-san-base64';
+import { AlertTriangle, History, Hand } from 'lucide-react';
+import { angryBase64, thinkingBase64, proudBase64 } from '../../assets/oji-san-states';
 
 interface InterventionOverlayProps {
   message: string;
@@ -30,6 +30,7 @@ const sendMessageSafe = (message: any, callback?: (response: any) => void) => {
 
 export const InterventionOverlay: React.FC<InterventionOverlayProps> = ({ message, onClose }) => {
   const [scoldMessage, setScoldMessage] = useState(message);
+  const [imageState, setImageState] = useState(angryBase64);
 
   useEffect(() => {
     setScoldMessage(message);
@@ -49,45 +50,41 @@ export const InterventionOverlay: React.FC<InterventionOverlayProps> = ({ messag
   };
 
   return (
-    <div className="w-full h-full bg-background/80 backdrop-blur-md flex items-center justify-center p-margin-mobile md:p-margin-desktop select-none overflow-hidden text-on-background">
+    <div className="fixed inset-0 w-full h-full bg-[#131315]/80 backdrop-blur-md z-[9999] flex items-center justify-center p-8 select-none overflow-hidden text-[#e5e1e4] scanlines">
       {/* Center Intervention Card */}
-      <div className="bg-surface border-[3px] border-outline-variant w-full max-w-2xl rounded-xl retro-shadow-container glow-crimson flex flex-col relative overflow-hidden animate-[pulse_3s_ease-in-out_infinite]">
+      <div className="bg-[#1E1E24] w-full max-w-3xl rounded-lg glow-crimson flex flex-col relative overflow-hidden animate-[pulse_3s_ease-in-out_infinite] z-50 shadow-2xl">
+        
         {/* Wood Texture / Scroll Banner Header */}
-        <div className="bg-surface-container-high border-b-[3px] border-outline-variant p-6 flex justify-between items-center bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiMzOTM5M2IiIGZpbGwtb3BhY2l0eT0iMC41Ii8+PC9zdmc+')]">
-          <div className="flex items-center gap-4">
-            <AlertTriangle className="text-inverse-primary w-9 h-9 shrink-0" />
-            <h1 className="font-headline-xl text-2xl md:text-[32px] text-secondary-container tracking-tighter uppercase leading-none">
+        <div className="bg-[#0e0e10] border-b-[3px] border-[#bb152c] p-6 flex justify-between items-center px-8 relative" style={{ minHeight: '80px' }}>
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiMzOTM5M2IiIGZpbGwtb3BhY2l0eT0iMC41Ii8+PC9zdmc+')] opacity-10"></div>
+          <div className="flex items-center gap-4 relative z-10 w-full justify-center">
+            <AlertTriangle className="text-[#fbb400] w-10 h-10 shrink-0" />
+            <h1 className="text-4xl md:text-5xl text-[#fbb400] tracking-tighter uppercase drop-shadow-[0_0_8px_rgba(251,180,0,0.8)] m-0 text-center" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>
               Dojo Code Chamber
             </h1>
+            <AlertTriangle className="text-[#fbb400] w-10 h-10 shrink-0" />
           </div>
-          <Gavel className="text-outline-variant w-9 h-9 shrink-0" />
         </div>
 
         {/* Content Area */}
-        <div className="p-gutter flex flex-col md:flex-row gap-gutter items-center md:items-start relative">
+        <div className="flex flex-col md:flex-row items-center md:items-start relative bg-[#131315]" style={{ padding: '40px', gap: '32px' }}>
           {/* Oji-San Sprite Frame */}
-          <div className="shrink-0 w-48 h-48 bg-surface-container-lowest border-[3px] border-outline-variant p-2 retro-shadow-secondary flex items-center justify-center relative overflow-hidden bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiMxYjFiMWQiIGZpbGwtb3BhY2l0eT0iMC41Ii8+PC9zdmc+')]">
-            <img
-              className="w-full h-full object-cover pixelated"
-              src={ojiSanBase64}
-              alt="Master Oji-San scolding"
+          <div className="shrink-0 hologram-frame p-2 flex items-center justify-center relative overflow-hidden rounded-md" style={{ width: '220px', height: '220px' }}>
+            <img 
+              alt="Master Oji-San" 
+              className="w-full h-full object-cover pixelated relative z-20" 
+              src={imageState} 
             />
-            {/* Rank Badge */}
-            <div className="absolute bottom-[-1px] right-[-1px] bg-inverse-primary border-t-[3px] border-l-[3px] border-outline-variant px-2 py-1">
-              <span className="font-label-sm text-xs text-parchment uppercase">
-                Grandmaster
-              </span>
-            </div>
           </div>
 
           {/* Speech Bubble Area */}
-          <div className="flex-1 w-full pt-4 md:pt-0">
-            <div className="bg-parchment border-[3px] border-outline-variant p-6 relative rounded-lg retro-shadow-secondary text-on-tertiary-fixed-variant">
+          <div className="flex-1 w-full flex items-center">
+            <div className="bg-[#1b1b1d] border-2 border-[#5b403f] relative rounded-md shadow-[0_0_15px_rgba(0,0,0,0.5)] text-[#e5e1e4] flex-1" style={{ padding: '32px' }}>
               <div className="bubble-tail hidden md:block"></div>
-              <h2 className="font-headline-md text-lg md:text-[24px] font-black text-inverse-primary uppercase mb-4 tracking-tight leading-none">
+              <h2 className="text-2xl font-black text-[#bb152c] uppercase mb-4 tracking-widest drop-shadow-[0_0_5px_rgba(187,21,44,0.8)] leading-none mt-0" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>
                 "FOOLISH DISCIPLE!"
               </h2>
-              <p className="font-body-lg text-sm md:text-[18px] text-on-tertiary-fixed font-bold leading-relaxed">
+              <p className="text-lg text-[#e5e1e4] font-medium leading-relaxed m-0" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
                 {scoldMessage}
               </p>
             </div>
@@ -95,20 +92,27 @@ export const InterventionOverlay: React.FC<InterventionOverlayProps> = ({ messag
         </div>
 
         {/* Action Buttons Footer */}
-        <div className="bg-surface-container border-t-[3px] border-outline-variant p-gutter flex flex-col md:flex-row justify-end gap-4 shrink-0">
-          <button
+        <div className="bg-[#201f21] border-t-2 border-[#bb152c] flex flex-col md:flex-row justify-center items-center" style={{ padding: '24px', gap: '24px' }}>
+          <button 
+            onMouseEnter={() => setImageState(thinkingBase64)}
+            onMouseLeave={() => setImageState(angryBase64)}
             onClick={handleBypass}
-            className="px-6 py-4 bg-surface-variant text-on-surface-variant font-label-md text-xs md:text-sm uppercase border-[3px] border-outline-variant retro-shadow-secondary hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(91,64,63,1)] active:translate-y-[4px] active:shadow-none transition-all duration-75 flex items-center justify-center gap-2 w-full md:w-auto"
+            className="bg-[#353437] text-[#e5e1e4] text-sm uppercase border-2 border-[#5b403f] hover:border-[#fbb400] hover:text-[#fbb400] transition-all duration-150 flex items-center justify-center tracking-widest hover:shadow-[0_0_10px_rgba(251,180,0,0.3)] rounded-md"
+            style={{ fontFamily: 'ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace', padding: '16px 24px', gap: '8px' }}
           >
             <History className="w-5 h-5 shrink-0" />
-            I am actually working (Request Bypass)
+            Request Bypass
           </button>
-          <button
+          
+          <button 
+            onMouseEnter={() => setImageState(proudBase64)}
+            onMouseLeave={() => setImageState(angryBase64)}
             onClick={handleCloseTab}
-            className="px-6 py-4 bg-inverse-primary text-parchment font-label-md text-xs md:text-sm uppercase font-bold border-[3px] border-on-primary-fixed retro-shadow-primary hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(187,21,44,1)] active:translate-y-[4px] active:shadow-none transition-all duration-75 flex items-center justify-center gap-2 w-full md:w-auto"
+            className="bg-[#bb152c] text-[#F1FAEE] text-sm uppercase font-bold border-2 border-[#bb152c] hover:bg-[#410007] hover:border-[#bb152c] transition-all duration-150 flex items-center justify-center tracking-widest shadow-[0_0_15px_rgba(187,21,44,0.6)] hover:shadow-[0_0_25px_rgba(187,21,44,0.8)] rounded-md"
+            style={{ fontFamily: 'ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace', padding: '16px 24px', gap: '8px' }}
           >
             <Hand className="w-5 h-5 shrink-0" />
-            Forgive me, Oji-San (Close Tab)
+            Forgive me (Close Tab)
           </button>
         </div>
       </div>

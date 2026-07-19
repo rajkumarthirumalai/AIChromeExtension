@@ -237,10 +237,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     });
     sendResponse({ success: true });
   } else if (message.action === 'bypassUrl' && sender.tab?.url) {
-    const hostname = getHostname(sender.tab.url);
-    const domain = getDomain(sender.tab.url);
+    const url = sender.tab.url;
+    const hostname = getHostname(url);
+    const domain = getDomain(url);
     if (hostname) {
-      chrome.storage.local.get(['bypassUrls'], (data) => {
+      chrome.storage.local.get(['bypassUrls', 'evaluationCache', 'domainCache'], (data) => {
         const whitelisted = Array.isArray(data.bypassUrls) ? data.bypassUrls : [];
         if (!whitelisted.includes(hostname)) {
           whitelisted.push(hostname);
@@ -248,14 +249,41 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (domain && !whitelisted.includes(domain)) {
           whitelisted.push(domain);
         }
-        chrome.storage.local.set({ bypassUrls: whitelisted }, () => {
-          console.log(`[Oji-San] Whitelisted ${hostname} and domain ${domain} for this session.`);
+
+        const urlCache: Record<string, any> = data.evaluationCache || {};
+        const domCache: Record<string, any> = data.domainCache || {};
+        
+        let cachesChanged = false;
+        
+        if (urlCache[url]) {
+          delete urlCache[url];
+          cachesChanged = true;
+        }
+        
+        if (domCache[domain]) {
+          delete domCache[domain];
+          cachesChanged = true;
+        }
+        
+        const updates: any = { bypassUrls: whitelisted };
+        if (cachesChanged) {
+          updates.evaluationCache = urlCache;
+          updates.domainCache = domCache;
+        }
+
+        chrome.storage.local.set(updates, () => {
+          console.log(`[Oji-San] Whitelisted ${hostname} and cleared from caches.`);
         });
       });
       sendResponse({ success: true });
     } else {
       sendResponse({ success: false, error: 'Invalid URL' });
     }
+  } else if (message.action === 'openOptions') {
+    if (chrome.runtime.openOptionsPage) {
+      chrome.runtime.openOptionsPage();
+    }
+    sendResponse({ success: true });
   } else if (message.action === 'checkInterventionStatus' && sender.tab?.id && sender.tab?.url) {
     const url = sender.tab.url;
     const hostname = getHostname(url);

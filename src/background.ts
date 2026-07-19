@@ -69,7 +69,7 @@ async function evaluateTab(tabId: number, tab: chrome.tabs.Tab) {
 
       // Check if URL hostname is whitelisted/bypassed
       const whitelisted = Array.isArray(bypassUrls) ? bypassUrls : [];
-      if (whitelisted.includes(hostname) || whitelisted.includes(domain)) {
+      if (whitelisted.includes(hostname) || whitelisted.includes(domain) || domain === 'youtube.com' || domain === 'youtu.be') {
         console.log(`[Oji-San] Bypassing evaluation for whitelisted site: ${hostname}`);
         return;
       }

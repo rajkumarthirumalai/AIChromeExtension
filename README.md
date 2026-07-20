@@ -21,22 +21,6 @@ For easy sharing with college students and professors, a pre-compiled version of
 
 ---
 
-## 📊 Understanding Sparring Stats
-
-Your progress is monitored in real-time in the Dojo Dashboard:
-
-*   **Pages Evaluated**: The total count of web pages (URLs) you have visited while the Dojo Gate is open.
-*   **Distractions Slashed**: The total number of times you wandered onto an off-topic site (like Netflix, Reddit, or Keka) and Master Oji-San successfully intervened and blocked it.
-*   **Focus Stamina (Health Bar)**: A percentage representing your focus discipline. 
-    *   **Formula**: $\text{Stamina} = \max\left(10\%, \text{round}\left(\frac{\text{Evaluated} - \text{Slashed}}{\text{Evaluated}} \times 100\right)\right)$
-    *   *Note*: In your current run of **87 Evaluated** pages vs **127 Distractions Slashed**, your stamina has bottomed out at **10%**! Master Oji-San suggests closing Keka and returning to your AWS training immediately!
-*   **Discipline Rating**: 
-    *   `ZEN MASTER`: 0 distractions slashed (Perfect Focus).
-    *   `DISCIPLED`: 1-2 distractions slashed.
-    *   `INITIATE`: Under 5 distractions slashed.
-    *   `SLACKER`: More than 5 distractions slashed.
-
----
 
 ## 🛠 Core Features
 

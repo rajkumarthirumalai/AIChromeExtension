@@ -42,8 +42,6 @@ Provides flexibility to toggle between two major API providers inside the dedica
 Tracks and displays browser discipline:
 * **Pages Evaluated**: Total URLs checked during the active session.
 * **Distractions Slashed**: Number of blocked distracting pages.
-* **Focus Stamina (Health Bar)**: Calculates discipline percentage:
-  $$\text{Stamina} = \max\left(10\%, \text{round}\left(\frac{\text{Evaluated} - \text{Slashed}}{\text{Evaluated}} \times 100\right)\right)$$
 * **Discipline Rating**: 
   * `ZEN MASTER` (0 distractions slashed - perfect focus)
   * `DISCIPLED` (1–2 distractions slashed)
